@@ -1,0 +1,61 @@
+name: Update star-history chart
+
+# Regenerates the README star-history SVGs weekly from the repository's own
+# stargazer timeline. The stargazer-timeline endpoint is restricted to a
+# repository's own collaborators/automation, so this must run in-repo with the
+# built-in GITHUB_TOKEN -- it cannot be produced by an external contributor.
+on:
+  schedule:
+    - cron: "0 3 * * 1" # Mondays, 03:00 UTC
+  workflow_dispatch:
+
+env:
+  LC_ALL: en_US.UTF-8
+
+defaults:
+  run:
+    shell: bash
+
+permissions:
+  contents: read
+
+concurrency:
+  group: star-history
+  cancel-in-progress: false
+
+jobs:
+  update-chart:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # commit the regenerated SVGs back to the default branch
+    steps:
+      - name: "Harden Runner"
+        uses: step-security/harden-runner@20cf305ff2072d973412fa9b1e3a4f227bda3c76 # v2.14.0
+        with:
+          egress-policy: audit
+
+      - name: "Checkout"
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: "Set up Python"
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+
+      - name: "Generate star-history SVGs"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: python .github/scripts/gen_star_history.py --out-dir asset
+
+      - name: "Commit updated charts"
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add asset/star_history_light.svg asset/star_history_dark.svg
+          if git diff --staged --quiet; then
+            echo "No change in star-history charts."
+          else
+            git commit -m "chore: refresh star-history chart [skip ci]"
+            git push
+          fi

@@ -112,6 +112,20 @@ LMCache has a growing community of developers, researchers, industry adopters, a
 
 As an independent open-source project, LMCache is becoming the de-facto standard for KV Cache management in LLM inference. Its continued development and community work are supported in part by [Tensormesh](https://www.tensormesh.ai/).
 
+## Star History
+
+If LMCache is useful to you, consider starring the repo to follow along — every star helps more people find the project.
+
+<p align="center">
+  <a href="https://star-history.com/#LMCache/LMCache&Date">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="asset/star_history_dark.svg">
+      <source media="(prefers-color-scheme: light)" srcset="asset/star_history_light.svg">
+      <img alt="LMCache Star History Chart" src="asset/star_history_light.svg" width="70%">
+    </picture>
+  </a>
+</p>
+
 ## Citation
 
 LMCache builds on research in KV cache management, including cache reuse, offloading, compression, and serving optimization. If you use LMCache in your research, please cite the LMCache paper and related work.
